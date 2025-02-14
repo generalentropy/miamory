@@ -1,31 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Card from "../../components/Card";
-import { shuffleCards } from "@/app/utils/game";
-import { cardsData } from "@/app/data/cardsData";
+import { useUserStore } from "@/app/store/user";
+import Board from "@/app/components/Board";
 
-interface CardType {
-  id: number;
-  imageName: string;
-  type: string;
-  color: string;
-}
 
 export default function Home() {
-  const [lastChecked, setLastChecked] = useState<number | null>(null);
-  const [shuffled, setShuffle] = useState<CardType[]>([]);
-
-  useEffect(() => {
-    setShuffle(shuffleCards(cardsData));
-  }, []);
+  const score = useUserStore((state) => state.score);
+  // const updateScore = useUserStore((state) => state.updateScore);
 
   return (
     <div className="flex w-full items-center justify-center">
+      <div className="absolute top-2 flex w-full max-w-[560px] border">
+        score : {score}
+      </div>
       <div className="flex max-w-[560px] flex-wrap justify-center gap-4">
-        {shuffled.map((el, i) => (
-          <Card setLastChecked={setLastChecked} key={i} image={el.imageName} />
-        ))}
+        <Board />
       </div>
     </div>
   );

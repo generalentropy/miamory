@@ -1,5 +1,8 @@
-export function checkPairs(prevCard: number, currCard: number): boolean {
-  return prevCard === currCard;
+export function checkPairs(
+  prevCardImage: string,
+  currCardImage: string,
+): boolean {
+  return prevCardImage === currCardImage;
 }
 
 export const shuffleCards = <T>(array: T[]): T[] => {
