@@ -31,7 +31,7 @@ export default function Card({ color, image, isFlipped, onClick }: CardProps) {
         {/* Face avant de la carte */}
         <div
           className={clsx(
-            "absolute flex h-full w-full items-center justify-center rounded-lg border-2 bg-green-600 text-3xl",
+            "absolute flex h-full w-full items-center justify-center rounded-lg border-2 border-green-200 bg-green-600 text-3xl",
             {
               "bg-red-400": color === "red",
               "bg-blue-400": color === "blue",

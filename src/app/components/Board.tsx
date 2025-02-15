@@ -14,26 +14,34 @@ interface CardType {
 }
 
 const flipSound = "/sounds/flip.wav";
-// const invalidSound = "/sounds/wrong.mp3";
 const success = "/sounds/success.mp3";
+const endSound = "/sounds/tada.mp3";
 
 export default function Board() {
-  // IDs des cartes temporairement retournées (non appariées)
+  // États locaux pour la logique du jeu
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
-  // IDs des cartes déjà appariées
   const [matchedCards, setMatchedCards] = useState<number[]>([]);
-  // Première carte cliquée pour comparaison
   const [firstCard, setFirstCard] = useState<{
     id: number;
     imageName: string;
   } | null>(null);
-  // Lock pour empêcher de cliquer pendant le délai de retournement
   const [isBoardLocked, setBoardLocked] = useState(false);
+  const [hasFinished, setHasFinished] = useState(false);
   const [shuffledCards, setShuffledCards] = useState<CardType[]>([]);
-  const updateScore = useUserStore((state) => state.updateScore);
 
-  useEffect(() => {
-    // On passe directement cardsData à shuffleCards (qui duplique et mélange déjà)
+  // Fonctions du store
+  const updateScore = useUserStore((state) => state.updateScore);
+  const updateScoreWrong = useUserStore((state) => state.updateScoreWrong);
+  const updateBestScore = useUserStore((state) => state.setBestScore);
+  const resetScore = useUserStore((state) => state.resetScore);
+
+  // Sons
+  const [playEndSound] = useSound(endSound);
+  const [playFlipSound] = useSound(flipSound);
+  const [playSuccess] = useSound(success, { volume: 0.5 });
+
+  // Fonction pour initialiser ou réinitialiser le plateau
+  const initBoard = () => {
     const shuffled = shuffleCards(cardsData);
     const cardsWithId: CardType[] = shuffled.map((card, index) => ({
       id: index + 1,
@@ -41,43 +49,36 @@ export default function Board() {
       color: card.color,
     }));
     setShuffledCards(cardsWithId);
+  };
+
+  // Initialisation du plateau au premier rendu
+  useEffect(() => {
+    initBoard();
   }, []);
 
-  const [playFlipSound] = useSound(flipSound);
-  const [playSuccess] = useSound(success);
-  // const [playInvalid] = useSound(invalidSound);
-
+  // Gestion du clic sur une carte
   const handleCardClick = (card: CardType) => {
-    // On ignore le clic si le plateau est verrouillé
     if (isBoardLocked) return;
-    // On ignore le clic si la carte est déjà appariée ou déjà retournée temporairement
     if (matchedCards.includes(card.id) || flippedCards.includes(card.id))
       return;
 
-    // Retourner la carte
     playFlipSound();
     setFlippedCards((prev) => [...prev, card.id]);
 
     if (!firstCard) {
-      // Première carte cliquée
       setFirstCard({ id: card.id, imageName: card.imageName });
     } else {
-      // Deuxième carte cliquée, comparer via imageName
       if (firstCard.imageName === card.imageName) {
-        // Paires correspondantes trouvées
         updateScore();
         playSuccess();
-        // Ajouter les cartes appariées dans matchedCards
         setMatchedCards((prev) => [...prev, firstCard.id, card.id]);
-        // Réinitialiser la sélection temporaire
         setFirstCard(null);
-        // On peut aussi retirer ces cartes de flippedCards si désiré :
         setFlippedCards((prev) =>
           prev.filter((id) => id !== firstCard.id && id !== card.id),
         );
       } else {
-        // Pas de correspondance, verrouiller le plateau et retourner les cartes après 1 seconde
         setBoardLocked(true);
+        updateScoreWrong();
 
         setTimeout(() => {
           setFlippedCards((prev) =>
@@ -90,18 +91,57 @@ export default function Board() {
     }
   };
 
+  // Effet pour détecter la fin du jeu
+  useEffect(() => {
+    if (
+      shuffledCards.length > 0 &&
+      matchedCards.length === shuffledCards.length &&
+      !hasFinished
+    ) {
+      playEndSound();
+      updateBestScore();
+      setHasFinished(true);
+    }
+  }, [matchedCards, shuffledCards, hasFinished, playEndSound, updateBestScore]);
+
+  // Fonction de reset du jeu
+  const resetGame = () => {
+    // Réinitialisation des états locaux
+    setFlippedCards([]);
+    setMatchedCards([]);
+    setFirstCard(null);
+    setBoardLocked(false);
+    setHasFinished(false);
+    // Réinitialisation du score si nécessaire
+    resetScore();
+    // Remélange du plateau
+    initBoard();
+  };
+
   return (
-    <div className="flex flex-wrap gap-4">
-      {shuffledCards.map((card) => (
-        <Card
-          key={card.id}
-          image={card.imageName}
-          isFlipped={
-            matchedCards.includes(card.id) || flippedCards.includes(card.id)
-          }
-          onClick={() => handleCardClick(card)}
-        />
-      ))}
-    </div>
+    <>
+      <div className="flex flex-wrap gap-4">
+        {shuffledCards.map((card) => (
+          <Card
+            key={card.id}
+            image={card.imageName}
+            isFlipped={
+              matchedCards.includes(card.id) || flippedCards.includes(card.id)
+            }
+            onClick={() => handleCardClick(card)}
+          />
+        ))}
+      </div>
+      {hasFinished && (
+        <div className="mt-4">
+          <button
+            onClick={resetGame}
+            className="rounded-lg bg-green-600 px-4 py-1 text-white"
+          >
+            Reset game
+          </button>
+        </div>
+      )}
+    </>
   );
 }
