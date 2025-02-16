@@ -2,11 +2,11 @@
 
 import { useUserStore } from "@/app/store/user";
 import Board from "@/app/components/Board";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 export default function Home() {
   const score = useUserStore((state) => state.score);
-  const bestscore = useUserStore((state) => state.bestScore);
-  // const updateScore = useUserStore((state) => state.updateScore);
+  const [highScore, savehighScore] = useLocalStorage("highscore", 0);
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -15,11 +15,11 @@ export default function Home() {
           Score : {score}
         </p>
         <p className="flex w-full justify-center italic">
-          High score : {bestscore}
+          High score : {highScore}
         </p>
       </div>
       <div className="flex max-w-[560px] flex-wrap justify-center gap-4">
-        <Board />
+        <Board highScore={highScore} saveHighScore={savehighScore} />
       </div>
     </div>
   );

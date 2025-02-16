@@ -13,11 +13,16 @@ interface CardType {
   color: string;
 }
 
+interface LocalStorage {
+  highScore: number;
+  saveHighScore: (number: number) => void;
+}
+
 const flipSound = "/sounds/flip.wav";
 const success = "/sounds/success.mp3";
 const endSound = "/sounds/tada.mp3";
 
-export default function Board() {
+export default function Board({ highScore, saveHighScore }: LocalStorage) {
   // États locaux pour la logique du jeu
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
   const [matchedCards, setMatchedCards] = useState<number[]>([]);
@@ -31,8 +36,8 @@ export default function Board() {
 
   // Fonctions du store
   const updateScore = useUserStore((state) => state.updateScore);
+  const score = useUserStore((state) => state.score);
   const updateScoreWrong = useUserStore((state) => state.updateScoreWrong);
-  const updateBestScore = useUserStore((state) => state.setBestScore);
   const resetScore = useUserStore((state) => state.resetScore);
 
   // Sons
@@ -99,10 +104,18 @@ export default function Board() {
       !hasFinished
     ) {
       playEndSound();
-      updateBestScore();
+      if (score > highScore) saveHighScore(score);
       setHasFinished(true);
     }
-  }, [matchedCards, shuffledCards, hasFinished, playEndSound, updateBestScore]);
+  }, [
+    matchedCards,
+    shuffledCards,
+    hasFinished,
+    playEndSound,
+    highScore,
+    saveHighScore,
+    score,
+  ]);
 
   // Fonction de reset du jeu
   const resetGame = () => {
