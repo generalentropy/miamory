@@ -6,6 +6,7 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 
 export default function Home() {
   const score = useUserStore((state) => state.score);
+  // https://github.com/uidotdev/usehooks/issues/254
   const [highScore, savehighScore] = useLocalStorage("highscore", 0);
 
   return (
