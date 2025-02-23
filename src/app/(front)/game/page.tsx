@@ -2,7 +2,7 @@
 
 import { useUserStore } from "@/app/store/user";
 import Board from "@/app/components/Board";
-import { useLocalStorage } from "@uidotdev/usehooks";
+import { useLocalStorage } from "usehooks-ts";
 
 export default function Home() {
   const score = useUserStore((state) => state.score);
