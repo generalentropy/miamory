@@ -156,7 +156,7 @@ export default function Board({ highScore, saveHighScore }: LocalStorage) {
         <div className="mt-4">
           <button
             onClick={resetGame}
-            className="rounded-lg bg-green-600 px-4 py-1 text-white"
+            className="cursor-pointer rounded-lg bg-green-600 px-4 py-1 text-white"
           >
             Reset game
           </button>
