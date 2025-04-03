@@ -10,7 +10,7 @@ export default function Home() {
   // https://github.com/uidotdev/usehooks/issues/254
   const [highScore, savehighScore] = useLocalStorage("highscore", {
     score: 0,
-    name: username,
+    name: "",
   });
 
   return (
@@ -24,7 +24,7 @@ export default function Home() {
           Votre score : {score}
         </p>
         <p className="flex w-full justify-center italic">
-          High score : {highScore.score}{" "}
+          🎉 High score : {highScore.score}{" "}
           {highScore.name ? (
             <span className="px-2"> - {highScore.name}</span>
           ) : null}
