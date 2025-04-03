@@ -15,7 +15,9 @@ interface CardType {
 
 interface LocalStorage {
   highScore: number;
-  saveHighScore: (number: number) => void;
+  saveHighScore: React.Dispatch<
+    React.SetStateAction<{ score: number; name: string }>
+  >;
 }
 
 const flipSound = "/sounds/flip.wav";
@@ -39,6 +41,9 @@ export default function Board({ highScore, saveHighScore }: LocalStorage) {
   const score = useUserStore((state) => state.score);
   const updateScoreWrong = useUserStore((state) => state.updateScoreWrong);
   const resetScore = useUserStore((state) => state.resetScore);
+
+  // Player
+  const player = useUserStore((state) => state.username);
 
   // Sons
   const [playEndSound] = useSound(endSound);
@@ -104,7 +109,8 @@ export default function Board({ highScore, saveHighScore }: LocalStorage) {
       !hasFinished
     ) {
       playEndSound();
-      if (score > highScore) saveHighScore(score);
+      if (score > highScore)
+        saveHighScore({ score: Number(score), name: player });
       setHasFinished(true);
     }
   }, [
@@ -115,6 +121,7 @@ export default function Board({ highScore, saveHighScore }: LocalStorage) {
     highScore,
     saveHighScore,
     score,
+    player,
   ]);
 
   // Fonction de reset du jeu

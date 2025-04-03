@@ -8,7 +8,10 @@ export default function Home() {
   const score = useUserStore((state) => state.score);
   const username = useUserStore((state) => state.username);
   // https://github.com/uidotdev/usehooks/issues/254
-  const [highScore, savehighScore] = useLocalStorage("highscore", 0);
+  const [highScore, savehighScore] = useLocalStorage("highscore", {
+    score: 0,
+    name: username,
+  });
 
   return (
     <div className="flex w-full items-center justify-center">
@@ -21,11 +24,14 @@ export default function Home() {
           Votre score : {score}
         </p>
         <p className="flex w-full justify-center italic">
-          High score : {highScore}
+          High score : {highScore.score}{" "}
+          {highScore.name ? (
+            <span className="px-2"> - {highScore.name}</span>
+          ) : null}
         </p>
       </div>
       <div className="flex max-w-[560px] flex-wrap justify-center gap-4">
-        <Board highScore={highScore} saveHighScore={savehighScore} />
+        <Board highScore={highScore.score} saveHighScore={savehighScore} />
       </div>
     </div>
   );
