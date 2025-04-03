@@ -1,8 +1,10 @@
 import { create } from "zustand";
 
 interface UserState {
+  username: string;
   score: number;
   bestScore: number;
+  setUsername: (user: string) => void;
   setBestScore: () => void;
   updateScore: () => void;
   resetScore: () => void;
@@ -10,8 +12,10 @@ interface UserState {
 }
 
 export const useUserStore = create<UserState>((set) => ({
+  username: "",
   score: 0,
   bestScore: 0,
+  setUsername: (user: string) => set(() => ({ username: user })),
   setBestScore: () =>
     set((state) => ({
       bestScore: state.score > state.bestScore ? state.score : state.bestScore,

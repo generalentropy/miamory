@@ -6,14 +6,19 @@ import { useLocalStorage } from "usehooks-ts";
 
 export default function Home() {
   const score = useUserStore((state) => state.score);
+  const username = useUserStore((state) => state.username);
   // https://github.com/uidotdev/usehooks/issues/254
   const [highScore, savehighScore] = useLocalStorage("highscore", 0);
 
   return (
     <div className="flex w-full items-center justify-center">
       <div className="absolute top-2 flex w-full max-w-[560px] flex-col">
+        <p className="text-center font-semibold text-pink-300">
+          {" "}
+          Joueur : {username || "Anonyme"}{" "}
+        </p>
         <p className="flex w-full justify-center text-center text-3xl font-bold">
-          Score : {score}
+          Votre score : {score}
         </p>
         <p className="flex w-full justify-center italic">
           High score : {highScore}
