@@ -37,6 +37,9 @@ export default function Home() {
         <Link
           className="rounded border-b-4 border-blue-700 bg-blue-500 px-4 py-2 text-center font-bold text-white hover:border-blue-500 hover:bg-blue-400"
           href="/game"
+          onClick={() => {
+            if (user) setUsername(user);
+          }}
         >
           Commencer la partie
         </Link>
