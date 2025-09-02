@@ -25,15 +25,17 @@ export default function Home() {
       <div className="text-5xl font-bold">Miam&apos;ory 🍕</div>
 
       <div className="flex flex-col gap-4">
-        {username && <p className="text-center">Hello {username} 🎉</p>}
-        <input
-          type="text"
-          value={user ?? ""}
-          onChange={handleNameChange}
-          onKeyDown={handleKeyDown}
-          placeholder="Nom ou pseudo"
-          className="rounded bg-gray-500 px-6 py-2 placeholder:text-sm placeholder:italic"
-        />
+        {username && <p className="text-center text-lg">Hello {username} 🎉</p>}
+        {!username && (
+          <input
+            type="text"
+            value={user ?? ""}
+            onChange={handleNameChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Nom ou pseudo"
+            className="rounded bg-gray-500 px-6 py-2 placeholder:text-sm placeholder:italic"
+          />
+        )}
         <Link
           className="rounded border-b-4 border-blue-700 bg-blue-500 px-4 py-2 text-center font-bold text-white hover:border-blue-500 hover:bg-blue-400"
           href="/game"
